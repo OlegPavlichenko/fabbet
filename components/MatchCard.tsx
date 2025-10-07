@@ -2,7 +2,6 @@ type Match = {
   id: number; league: string; home_team: string; away_team: string; kickoff: string;
   odds_home?: number; odds_draw?: number; odds_away?: number;
 };
-
 export default function MatchCard({ m, onPick }: { m: Match; onPick: (id:number)=>void }){
   return (
     <div className="rounded-2xl border p-4 shadow-sm space-y-2">

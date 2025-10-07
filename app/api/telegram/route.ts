@@ -6,7 +6,6 @@ export const dynamic = "force-dynamic";
 
 const token = process.env.TELEGRAM_BOT_TOKEN!;
 const secret = process.env.TELEGRAM_WEBHOOK_SECRET!; // used as path secret
-
 const bot = new Bot(token);
 
 bot.command("start", ctx => ctx.reply(

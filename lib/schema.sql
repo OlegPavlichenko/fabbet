@@ -5,8 +5,7 @@ create table if not exists public.users (
   nickname text,
   created_at timestamptz default now()
 );
-
--- Matches (simplified for football)
+-- Matches
 create table if not exists public.matches (
   id bigserial primary key,
   league text not null,
@@ -17,7 +16,6 @@ create table if not exists public.matches (
   odds_draw numeric,
   odds_away numeric
 );
-
 -- Predictions
 create table if not exists public.predictions (
   id bigserial primary key,

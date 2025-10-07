@@ -8,14 +8,7 @@ export type Match = {
   odds_draw?: number;
   odds_away?: number;
 };
-
-export type Prediction = {
-  match_id: number;
-  pick: 'HOME'|'DRAW'|'AWAY';
-  confidence: number; // 0..1
-};
-
-// Naive baseline: lowest odds => pick; confidence ~ 1/odds clamped
+export type Prediction = { match_id: number; pick: 'HOME'|'DRAW'|'AWAY'; confidence: number; };
 export function predict(match: Match): Prediction {
   const { odds_home, odds_draw, odds_away } = match;
   const odds = [
