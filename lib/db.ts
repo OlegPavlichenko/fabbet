@@ -1,11 +1,12 @@
 import { Pool } from "pg";
+import type { Pool as PgPool } from "pg";
 
-let pool: Pool | null = null;
+let pool: PgPool | null = null;
 
 function getPool() {
   if (!pool) {
     const connectionString = process.env.DATABASE_URL!;
-    // Для Supabase обычно требуется SSL
+    // Для Supabase часто нужен SSL
     pool = new Pool({
       connectionString,
       max: 3,
