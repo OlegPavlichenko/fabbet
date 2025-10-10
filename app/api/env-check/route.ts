@@ -1,20 +1,30 @@
 import { NextResponse } from "next/server";
-
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const headers = {
+    "cache-control": "no-store, no-cache, must-revalidate, max-age=0",
+    "pragma": "no-cache",
+  };
+
   const raw = process.env.DATABASE_URL ?? null;
-  let parsed: Record<string, any> | null = null;
+  let parsed: any = null;
+  let safeSample = null;
 
   if (raw) {
+    // покажем кусочки без секрета: первые/последние символы
+    safeSample = raw.length <= 20
+      ? raw
+      : `${raw.slice(0, 10)}...${raw.slice(-10)}`;
+
     try {
       const u = new URL(raw);
       parsed = {
-        protocol: u.protocol,        // should be "postgresql:"
-        host: u.hostname,            // e.g. db.abcd.supabase.co
-        port: u.port,                // "5432"
-        database: u.pathname.replace(/^\//, ""), // postgres
+        protocol: u.protocol,
+        host: u.hostname,
+        port: u.port,
+        database: u.pathname.replace(/^\//, ""),
         hasSSLQuery: u.search.includes("sslmode=") || u.search.includes("ssl="),
       };
     } catch (e: any) {
@@ -22,11 +32,17 @@ export async function GET() {
     }
   }
 
-  return NextResponse.json({
-    present: !!raw,
-    length: raw?.length ?? 0,
-    parsed,
-    vercelEnv: process.env.VERCEL_ENV, // "production" | "preview" | "development"
-    nodeEnv: process.env.NODE_ENV,
-  });
+  return new NextResponse(
+    JSON.stringify({
+      present: !!raw,
+      length: raw?.length ?? 0,
+      sample: safeSample,
+      parsed,
+      vercelEnv: process.env.VERCEL_ENV,
+      nodeEnv: process.env.NODE_ENV,
+      vercelUrl: process.env.VERCEL_URL,
+      gitSha: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
+    }),
+    { headers }
+  );
 }
