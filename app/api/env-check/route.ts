@@ -8,7 +8,9 @@ export async function GET() {
     "pragma": "no-cache",
   };
 
-  const raw = process.env.DATABASE_URL ?? null;
+  const raw = process.env.DATABASE_URL ?? "";
+const hasAtHost = raw.includes("@db.") || raw.includes("@") && raw.includes(".supabase.co");
+return NextResponse.json({ /*...*/, hasAtHost });
   let parsed: any = null;
   let safeSample = null;
 
