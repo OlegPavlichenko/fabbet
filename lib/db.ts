@@ -4,8 +4,12 @@ let pool: any = null;
 
 function getPool() {
   if (!pool) {
-    const connectionString = process.env.DATABASE_URL!;
-    // Для Supabase/облачных БД обычно нужен SSL
+    const connectionString = process.env.DATABASE_URL;
+    if (!connectionString) {
+      throw new Error(
+        "DATABASE_URL is missing. Set it in Vercel → Project → Settings → Environment Variables (Production)."
+      );
+    }
     pool = new Pool({
       connectionString,
       max: 3,
