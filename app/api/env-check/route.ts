@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -9,17 +10,13 @@ export async function GET() {
   };
 
   const raw = process.env.DATABASE_URL ?? "";
-const hasAtHost = raw.includes("@db.") || raw.includes("@") && raw.includes(".supabase.co");
-return NextResponse.json({ /*...*/, hasAtHost });
+  const hasAtHost = (raw.includes("@db.") && raw.includes(".supabase.co")) || false;
+
   let parsed: any = null;
-  let safeSample = null;
+  let safeSample: string | null = null;
 
   if (raw) {
-    // покажем кусочки без секрета: первые/последние символы
-    safeSample = raw.length <= 20
-      ? raw
-      : `${raw.slice(0, 10)}...${raw.slice(-10)}`;
-
+    safeSample = raw.length <= 20 ? raw : `${raw.slice(0, 10)}...${raw.slice(-10)}`;
     try {
       const u = new URL(raw);
       parsed = {
@@ -37,8 +34,9 @@ return NextResponse.json({ /*...*/, hasAtHost });
   return new NextResponse(
     JSON.stringify({
       present: !!raw,
-      length: raw?.length ?? 0,
+      length: raw.length,
       sample: safeSample,
+      hasAtHost,             // ← видно, попал ли блок "@db....supabase.co"
       parsed,
       vercelEnv: process.env.VERCEL_ENV,
       nodeEnv: process.env.NODE_ENV,
